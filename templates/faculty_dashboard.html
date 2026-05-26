@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Faculty Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 pb-24">
+
+<!-- NAVBAR -->
+
+<div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-50">
+
+    <!-- LOGO -->
+
+    <h1 class="text-3xl font-bold">
+        CircularX AI
+    </h1>
+
+    <!-- RIGHT SECTION -->
+
+    <div class="flex items-center gap-4">
+
+        <!-- SEARCH -->
+
+        <form action="/search">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search circulars..."
+                class="p-3 rounded-full text-black w-72"
+            >
+
+        </form>
+
+        <!-- FILTER -->
+
+        <select
+            onchange="location=this.value"
+            class="text-black p-3 rounded-full"
+        >
+
+            <option>Filter</option>
+
+            <option disabled>Department Wise</option>
+
+            <option value="/filter/CSE">CSE</option>
+            <option value="/filter/ISE">ISE</option>
+            <option value="/filter/ECE">ECE</option>
+            <option value="/filter/EEE">EEE</option>
+            <option value="/filter/AIML">AIML</option>
+            <option value="/filter/AIDS">AIDS</option>
+            <option value="/filter/Placement">Placement</option>
+
+            <option disabled>Month Wise</option>
+
+            <option value="/month/January">January</option>
+            <option value="/month/February">February</option>
+            <option value="/month/March">March</option>
+            <option value="/month/April">April</option>
+            <option value="/month/May">May</option>
+            <option value="/month/June">June</option>
+
+        </select>
+
+        <!-- NOTIFICATION -->
+
+        <a
+            href="/notifications"
+            class="relative text-3xl"
+        >
+
+            🔔
+
+            <span class="absolute -top-2 -right-2 bg-red-600 text-xs px-2 py-1 rounded-full">
+                5
+            </span>
+
+        </a>
+
+        <!-- PROFILE -->
+
+        <div class="bg-white text-black px-5 py-3 rounded-2xl shadow-xl">
+
+            <p class="font-bold text-lg">
+                {{ session['name'] }}
+            </p>
+
+            <p class="text-sm text-gray-500">
+                {{ session['branch'] }}
+            </p>
+
+            <p class="text-sm text-gray-500">
+                {{ session['post'] }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- WELCOME -->
+
+<div class="p-8">
+
+    <h1 class="text-4xl font-bold">
+        Welcome, {{ session['name'] }}
+    </h1>
+
+    <p class="text-gray-500 mt-2">
+        Faculty Dashboard
+    </p>
+
+</div>
+
+<!-- UPLOAD BUTTON -->
+
+<div class="px-8 mb-8">
+
+    <button
+        onclick="openUpload()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full shadow-xl text-lg"
+    >
+
+        ⬆ Upload Circular
+
+    </button>
+
+</div>
+
+<!-- PINNED SECTION -->
+
+<div class="px-8">
+
+    <h2 class="text-3xl font-bold mb-6">
+        📌 Pinned Circulars
+    </h2>
+
+    <div class="grid grid-cols-2 gap-6">
+
+        {% for circular in circulars %}
+
+        {% if circular['is_pinned'] == 1 and circular['is_hidden'] == 0 %}
+
+        <div class="bg-yellow-50 border-l-8 border-yellow-500 p-6 rounded-3xl shadow-lg">
+
+            <div class="flex justify-between items-center">
+
+                <h2 class="text-2xl font-bold">
+                    {{ circular['title'] }}
+                </h2>
+
+                <span class="text-3xl">
+                    📌
+                </span>
+
+            </div>
+
+            <p class="mt-4 text-gray-700">
+
+                {{ circular['description'][:120] }}...
+
+            </p>
+
+            <div class="flex justify-between mt-6">
+
+                <div>
+
+                    <p class="font-bold">
+                        {{ circular['uploader_name'] }}
+                    </p>
+
+                    <p class="text-gray-500">
+                        {{ circular['uploader_department'] }}
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <span class="bg-yellow-200 px-4 py-2 rounded-full">
+                        Important
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <button
+
+                onclick='openModal(
+                {{ circular["title"]|tojson }},
+                {{ circular["description"]|tojson }},
+                {{ circular["attachment_path"]|tojson }},
+                {{ circular["id"]|tojson }}
+                )'
+
+                class="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full"
+
+            >
+
+                View Circular
+
+            </button>
+            <a
+    href="/hide_pin/{{ circular['id'] }}"
+    class="bg-red-500 text-white px-4 py-2 rounded-full"
+>
+    Remove Pin
+</a>
+
+        </div>
+
+        {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- LATEST -->
+
+<div class="px-8 mt-12">
+
+    <h2 class="text-3xl font-bold mb-6">
+        Latest Circulars
+    </h2>
+
+</div>
+
+<!-- CIRCULARS -->
+
+<div class="px-8 space-y-6">
+
+    {% for circular in circulars %}
+
+    {% if circular['is_pinned'] != 1 or circular['is_hidden'] == 1 %}
+    <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition">
+
+        <div class="flex justify-between">
+
+            <!-- LEFT -->
+
+            <div class="w-[75%]">
+
+                <div class="flex items-center gap-3">
+
+                    <!-- TITLE -->
+
+                    <h2 class="text-3xl {% if circular['is_read'] == 0 %}font-bold text-black{% else %}font-normal text-gray-700{% endif %}">
+
+                        {{ circular['title'] }}
+
+                    </h2>
+
+                    <!-- BLUE DOT ONLY FOR UNREAD -->
+
+                    {% if circular['is_read'] == 0 %}
+
+                    <span class="text-blue-600 text-2xl">
+                        ●
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- DESCRIPTION -->
+
+                <p class="mt-4 text-gray-700 text-lg">
+
+                    {{ circular['description'][:180] }}...
+
+                </p>
+
+                <!-- TAGS -->
+
+                <div class="flex gap-3 mt-6">
+
+                    <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
+
+                        {{ circular['department'] }}
+
+                    </span>
+
+                    <span class="bg-gray-100 px-4 py-2 rounded-full">
+
+                        {{ circular['access_type'] }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+
+            <div class="text-right">
+
+                <p class="font-bold text-xl">
+
+                    {{ circular['uploader_name'] }}
+
+                </p>
+
+                <p class="text-gray-500">
+
+                    {{ circular['uploader_department'] }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <button
+
+            onclick='openModal(
+            {{ circular["title"]|tojson }},
+            {{ circular["description"]|tojson }},
+            {{ circular["attachment_path"]|tojson }},
+            {{ circular["id"]|tojson }}
+            )'
+
+            class="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full"
+
+        >
+
+            View Circular
+
+        </button>
+
+    </div>
+
+    {% endif %}
+
+    {% endfor %}
+
+</div>
+
+<!-- MODAL -->
+
+<div
+    id="modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+>
+
+    <div class="bg-white w-[700px] rounded-3xl p-10 shadow-2xl">
+
+        <!-- HEADER -->
+
+        <div class="flex justify-between items-center">
+
+            <h1
+                id="modalTitle"
+                class="text-4xl font-bold"
+            ></h1>
+
+            <button
+                onclick="closeModal()"
+                class="text-red-500 text-3xl"
+            >
+                ✖
+            </button>
+
+        </div>
+
+        <!-- DESCRIPTION -->
+
+        <p
+            id="modalDescription"
+            class="mt-6 text-gray-700 text-lg leading-8"
+        ></p>
+
+        <!-- BUTTONS -->
+
+        <div class="flex gap-4 mt-10">
+
+            <!-- OPEN PDF -->
+
+            <a
+                id="pdfLink"
+                href="#"
+                target="_blank"
+                class="bg-blue-600 text-white px-6 py-3 rounded-xl"
+            >
+
+                Open PDF
+
+            </a>
+
+            <!-- READ -->
+
+            <a
+                id="readLink"
+                href="#"
+                class="bg-green-600 text-white px-6 py-3 rounded-xl"
+            >
+
+                Mark Read
+
+            </a>
+
+            <!-- SAVE -->
+
+            <a
+                id="saveLink"
+                href="#"
+                class="bg-yellow-500 text-white px-6 py-3 rounded-xl"
+            >
+
+                ⭐ Save
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+
+<div class="fixed bottom-0 w-full bg-white shadow-2xl flex justify-around p-5 border-t">
+
+    <a
+        href="/faculty"
+        class="font-bold text-blue-600"
+    >
+        🏠 Home
+    </a>
+
+    <a href="/read">
+        ✅ Read
+    </a>
+
+    <a href="/saved">
+        ⭐ Saved
+    </a>
+
+    <a href="/history">
+        🗂 Archived
+    </a>
+
+    <a href="/analytics">
+        📊 Analytics
+    </a>
+
+</div>
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+function openUpload(){
+
+    window.location.href = '/upload';
+
+}
+
+function openModal(title, desc, pdf, id){
+
+    document.getElementById('modal').classList.remove('hidden');
+
+    document.getElementById('modalTitle').innerText = title;
+
+    document.getElementById('modalDescription').innerText = desc;
+
+    // PDF BUTTON
+
+    if(pdf && pdf !== ""){
+
+        document.getElementById('pdfLink').href =
+        '/static/uploads/' + pdf;
+
+        document.getElementById('pdfLink').style.display =
+        'inline-block';
+
+    }
+    else{
+
+        document.getElementById('pdfLink').style.display =
+        'none';
+
+    }
+
+    // READ BUTTON
+
+    document.getElementById('readLink').href =
+    '/mark_read/' + id;
+
+    // SAVE BUTTON
+
+    document.getElementById('saveLink').href =
+    '/save/' + id;
+
+}
+
+function closeModal(){
+
+    document.getElementById('modal').classList.add('hidden');
+
+}
+
+</script>
+
+</body>
+
+</html>

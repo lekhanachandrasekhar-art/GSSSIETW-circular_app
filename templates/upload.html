@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Upload Circular</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+<div class="bg-white p-10 rounded-xl shadow-xl w-[600px]">
+
+<h1 class="text-3xl font-bold mb-6">
+Upload Circular
+</h1>
+
+<form method="POST" enctype="multipart/form-data">
+
+<input
+    type="text"
+    name="title"
+    placeholder="Circular Title"
+    class="w-full border p-3 rounded mb-4"
+>
+
+<textarea
+    name="description"
+    placeholder="Description"
+    class="w-full border p-3 rounded mb-4"
+></textarea>
+
+<input
+    type="file"
+    name="attachment"
+    class="mb-4"
+>
+
+<select
+    name="department"
+    class="w-full border p-3 rounded mb-4"
+>
+    <option>General</option>
+    <option>CSE</option>
+    <option>ISE</option>
+    <option>ECE</option>
+    <option>EEE</option>
+    <option>AIML</option>
+    <option>AIDS</option>
+    <option>Placement</option>
+</select>
+
+<select
+    name="access_type"
+    class="w-full border p-4 rounded mb-4"
+>
+    <option>Access to All</option>
+    <option>Department Only</option>
+    <option>Faculty Only</option>
+    <option disabled>Year Wise</option>
+        <option>1st Year</option>
+        <option>2nd Year</option>
+        <option>3rd Year</option>
+        <option>4th Year</option>
+
+
+</select>
+
+<label>
+<input type="checkbox" name="pin">
+Pin Important Circular
+</label>
+
+<br><br>
+
+<button class="bg-blue-600 text-white px-6 py-3 rounded">
+Upload Circular
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Notifications</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- TOP BAR -->
+
+<div class="bg-blue-600 text-white p-5 flex justify-between items-center shadow-lg">
+
+    <h1 class="text-3xl font-bold">
+        🔔 Notifications
+    </h1>
+
+    <a
+        href="/faculty"
+        class="bg-white text-blue-600 px-5 py-2 rounded-xl font-bold"
+    >
+        Back
+    </a>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="p-8 space-y-6">
+
+    <!-- NEW CIRCULARS -->
+
+    <div class="bg-white rounded-3xl shadow-lg p-8 border-l-8 border-blue-600">
+
+        <div class="flex items-center gap-5">
+
+            <div class="text-5xl">
+                📄
+            </div>
+
+            <div>
+
+                <h1 class="text-3xl font-bold">
+                    {{ total }} New Circulars Added
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    New circulars have been uploaded recently.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- IMPORTANT -->
+
+    <div class="bg-white rounded-3xl shadow-lg p-8 border-l-8 border-yellow-500">
+
+        <div class="flex items-center gap-5">
+
+            <div class="text-5xl">
+                📌
+            </div>
+
+            <div>
+
+                <h1 class="text-3xl font-bold">
+                    {{ important }} Important Circulars
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Important circulars are pinned by faculty.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
